@@ -5,7 +5,7 @@ input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.
 ## F-Droid 설치 (https://f-droid.org/)
 ```
 pkg update
-pkg install nano git python curl wget ffmpeg
+pkg install -y nano git python curl wget ffmpeg
 ```
 
 ## yt-dlp 설치
