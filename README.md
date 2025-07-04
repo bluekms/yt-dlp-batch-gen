@@ -1,5 +1,5 @@
 # yt-dlp-batch-gen
-input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(ytd.sh)를 생성하는 개인용 도구입니다.
+input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.sh)를 생성하는 개인용 도구입니다.
 
 # 환경설정
 ## F-Droid 설치 (https://f-droid.org/)
@@ -33,15 +33,15 @@ python gen.py
 
 
 # 옵션
-## --order-num
+## --order N
 다운받는 파일명 앞에 input.txt의 순서를 가지는 두 자리 숫자를 추가합니다.
-> python gen.py --order-num
+> python gen.py --order 1
 ```
 기존)
 [체널명] 영상명.mp4
 
 옵션 사용)
-00. [체널명] 영상명.mp4
+01. [체널명] 영상명.mp4
 ```
 
 ## --mp3
