@@ -19,13 +19,11 @@ wget -O gen.py https://raw.githubusercontent.com/bluekms/yt-dlp-batch-gen/main/g
 ```
 
 # 사용법
-## input.txt파일 준비
 ```
 rm input.txt & nano input.txt
 ```
 이후 준비한 url들을 붙여넣고 ctrl+x, y를 눌러 nano 종료.
 
-## gen.py 및 생성된 ytd.sh 실행
 ```
 python gen.py
 .\ytd.sh
