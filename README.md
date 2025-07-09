@@ -28,22 +28,25 @@ rm input.txt & nano input.txt
 ## gen.py 및 생성된 ytd.sh 실행
 ```
 python gen.py
-.\ytd.sh
+./ytd.sh
 ```
 
 
 # 옵션
 ## --order N
 다운받는 파일명 앞에 input.txt의 순서를 가지는 두 자리 숫자를 추가합니다.
-> python gen.py --order 1
 ```
-기존)
-[체널명] 영상명.mp4
+python gen.py --order 1
+```
 
-옵션 사용)
-01. [체널명] 영상명.mp4
-```
+> 기존)
+> [체널명] 영상명.mp4
+> 
+> 옵션 사용)
+> 01. [체널명] 영상명.mp4
 
 ## --mp3
 소리만 mp3포멧으로 다운로드
-> python gen.py --mp3
+```
+python gen.py --mp3
+```
