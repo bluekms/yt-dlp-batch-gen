@@ -28,6 +28,8 @@ rm input.txt & nano input.txt
 ## gen.py 및 생성된 ytd.sh 실행
 ```
 python gen.py
+```
+```
 ./ytd.sh
 ```
 
@@ -49,4 +51,5 @@ python gen.py --order 1
 소리만 mp3포멧으로 다운로드
 ```
 python gen.py --mp3
+./ytd.sh
 ```
