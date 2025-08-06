@@ -6,7 +6,16 @@ input_file = "input.txt"
 output_file = "ytd.sh"
 
 # 옵션 처리
-use_mp3 = "--mp3" in sys.argv
+quality = None
+if "-q" in sys.argv:
+    try:
+        idx = sys.argv.index("-q")
+        quality = int(sys.argv[idx + 1])
+        if quality not in (0, 720, 1080):
+            raise ValueError
+    except (IndexError, ValueError):
+        print("에러: -q 옵션 뒤에는 0, 720 또는 1080 중 하나를 입력해야 합니다.")
+        sys.exit(1)
 
 # --order N 처리
 order_start = None
@@ -28,11 +37,18 @@ with open(input_file, "r") as infile, open(output_file, "w") as outfile:
     for index, line in enumerate(infile, start=order_start or 1):
         url = line.strip()
         if url:
-            number_prefix = f"{index:02}. " if order_start is not None else ""
+            number_prefix = f"{index:03}. " if order_start is not None else ""
             output_template = f'storage/downloads/{number_prefix}[%(uploader)s] %(title)s.%(ext)s'
-            mp3_option = "-x --audio-format mp3 " if use_mp3 else ""
+
+            if quality == 0:
+                extra_options = "-x --audio-format mp3 "
+            elif quality in (720, 1080):
+                extra_options = f'-f "bestvideo[height<={quality}]+bestaudio" '
+            else:
+                extra_options = ""
+
             outfile.write(
-                f'yt-dlp {mp3_option}-o "{output_template}" --no-overwrites "{url}"\n'
+                f'yt-dlp {extra_options}-o "{output_template}" --no-overwrites "{url}"\n'
             )
 
 # 실행 권한 부여
