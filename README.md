@@ -9,7 +9,7 @@ input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.
 ## termux 설정
 ```
 pkg update
-pkg install -U nano git python curl wget ffmpeg yt-dlp
+pkg install -U nano git python curl wget ffmpeg yt-dlp -y
 termux-setup-storage
 ```
 
