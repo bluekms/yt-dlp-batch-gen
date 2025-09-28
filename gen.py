@@ -53,7 +53,7 @@ with open(input_file, "r") as infile, open(output_file, "w") as outfile:
             if quality == 0:
                 extra_options = "-x --audio-format mp3 "
             elif quality in (720, 1080):
-                extra_options = f'-f "bestvideo[height<={quality}]+bestaudio" '
+                extra_options = f'-f "bv*[height<={quality}]+ba" '
             else:
                 extra_options = ""
 
