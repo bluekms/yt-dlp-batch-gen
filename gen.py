@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import subprocess
 
 input_file = "input.txt"
 output_file = "ytd.sh"
@@ -55,3 +56,12 @@ with open(input_file, "r") as infile, open(output_file, "w") as outfile:
 os.chmod(output_file, 0o755)
 
 print(f"{output_file} 파일이 생성되었고 실행 권한이 부여되었습니다.")
+
+# 스크립트 생성 후 바로 실행
+try:
+    if output_file.endswith(".sh"):
+        subprocess.run(["bash", output_file], check=True)
+    else:  # ytd.bat
+        subprocess.run([output_file], shell=True, check=True)
+except subprocess.CalledProcessError as e:
+    print(f"실행 중 오류 발생: {e}")
