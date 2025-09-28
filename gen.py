@@ -28,6 +28,16 @@ if "--order" in sys.argv:
         print("에러: --order 옵션 뒤에는 정수를 입력해야 합니다.")
         sys.exit(1)
 
+# 실행 파일 prefix와 출력 경로 처리
+output_path = "storage/downloads"
+yt_dlp_cmd = "yt-dlp"
+title_cmd = "[%(uploader)s] %(title)s.%(ext)s"
+if "-w" in sys.argv:
+    output_path = "."
+    output_file = "ytd.bat"
+    yt_dlp_cmd = ".\\yt-dlp"
+    title_cmd = "[%%(uploader)s] %%(title)s.%%(ext)s"
+
 # 기존 ytd.sh 파일 삭제
 if os.path.exists(output_file):
     os.remove(output_file)
@@ -39,7 +49,7 @@ with open(input_file, "r") as infile, open(output_file, "w") as outfile:
         url = line.strip()
         if url:
             number_prefix = f"{index:03}. " if order_start is not None else ""
-            output_template = f'storage/downloads/{number_prefix}[%(uploader)s] %(title)s.%(ext)s'
+            output_template = f'{output_path}/{number_prefix}{title_cmd}'
 
             if quality == 0:
                 extra_options = "-x --audio-format mp3 "
@@ -49,7 +59,7 @@ with open(input_file, "r") as infile, open(output_file, "w") as outfile:
                 extra_options = ""
 
             outfile.write(
-                f'yt-dlp {extra_options}-o "{output_template}" --no-overwrites "{url}"\n'
+                f'{yt_dlp_cmd} {extra_options}-o "{output_template}" --no-overwrites "{url}"\n'
             )
 
 # 실행 권한 부여
