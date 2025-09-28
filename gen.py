@@ -44,7 +44,6 @@ if os.path.exists(output_file):
 
 # input.txt 읽고 ytd.sh 작성
 with open(input_file, "r") as infile, open(output_file, "w") as outfile:
-    outfile.write("#!/bin/bash\n\n")
     for index, line in enumerate(infile, start=order_start or 1):
         url = line.strip()
         if url:
