@@ -9,7 +9,7 @@ input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.
 ## termux 설정
 ```
 pkg update
-pkg install -U nano git python curl wget ffmpeg yt-dlp -y
+pkg install -y -U nano git python curl wget ffmpeg deno yt-dlp
 termux-setup-storage
 ```
 
@@ -41,11 +41,11 @@ python gen.py
 python gen.py --order 1
 ```
 
-> 기존)
-> [체널명] 영상명.mp4
+> 기존)  
+> [체널명] 영상명.mp4  
 > 
-> 옵션 사용)
-> 01. [체널명] 영상명.mp4
+> 옵션 사용)  
+> 01. [체널명] 영상명.mp4  
 
 ## --q N
 영상의 퀄리티를 선택합니다. <br/>
