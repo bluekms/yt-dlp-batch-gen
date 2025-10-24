@@ -64,7 +64,7 @@ python gen.py --q 720
 영상의 품질을 720 이하로 제한합니다.
 
 ```
-python gen.py --q 720
+python gen.py --q 1080
 ./ytd.sh
 ```
 영상의 품질을 1080 이하로 제한합니다.
