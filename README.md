@@ -71,4 +71,8 @@ python gen.py --q 1080
 
 
 ## -w
-sh파일 대신 ytd.bat로 출력합니다.
+windows. sh파일 대신 ytd.bat로 출력합니다.
+
+
+## -p
+pure. 경로명, 파일명 옵션을 제외한 다른 옵션들을 무시합니다.

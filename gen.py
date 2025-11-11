@@ -31,6 +31,9 @@ if "--order" in sys.argv:
 # Windows 배치 모드 여부
 is_windows = "-w" in sys.argv
 
+# 순수(pure) 모드 여부: 파일명/경로 관련 옵션만 남김
+is_pure = "-p" in sys.argv
+
 # 실행 파일 prefix와 출력 경로 처리
 if is_windows:
     output_path = "."
@@ -49,7 +52,7 @@ if os.path.exists(output_file):
 
 # 공통 옵션 구성
 # - Termux: IPv4 강제(-4) + 안드로이드 클라이언트 우회(--extractor-args ...)
-# - Windows: 기본값(원하면 -4 유지해도 무방하지만 여기선 깔끔히 분리)
+# - Windows: 기본값
 common_opts = []
 if not is_windows:
     common_opts += ['-4', '--extractor-args', 'youtube:player_client=android']
@@ -92,35 +95,40 @@ with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", e
         # 품질 옵션에 따른 extra_options/format
         extra_options = []
         fmt = None
-        if quality == 0:
-            # 오디오만 추출(mp3)
-            extra_options += ['-x', '--audio-format', 'mp3']
-        elif quality in (720, 1080):
-            fmt = format_for_height(quality)
-        else:
-            fmt = default_format()
+        if not is_pure:
+            if quality == 0:
+                extra_options += ['-x', '--audio-format', 'mp3']
+            elif quality in (720, 1080):
+                fmt = format_for_height(quality)
+            else:
+                fmt = default_format()
 
         # 공통 커맨드 문자열 만들기
         if is_windows:
-            # 배치: 인자들을 문자열로 깔끔히 조합
             cmd_parts = [yt_dlp_cmd]
-            cmd_parts += common_opts
-            if extra_options:
-                cmd_parts += extra_options
-            if fmt:
-                cmd_parts += ['-f', f'"{fmt}"']
-            cmd_parts += ['-o', f'"%OUT_DIR%/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
-            # 한 줄 실행 (실패해도 다음 줄 계속)
+            if not is_pure:
+                cmd_parts += common_opts
+                if extra_options:
+                    cmd_parts += extra_options
+                if fmt:
+                    cmd_parts += ['-f', f'"{fmt}"']
+                cmd_parts += ['-o', f'"%OUT_DIR%/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
+            else:
+                # pure: 파일명/경로 옵션만
+                cmd_parts += ['-o', f'"%OUT_DIR%/{number_prefix}{title_cmd}"', f'"{url}"']
             outfile.write(" ".join(cmd_parts) + "\n")
         else:
-            # bash: 실패해도 계속 진행하도록 '|| true' 추가
             cmd_parts = [yt_dlp_cmd]
-            cmd_parts += common_opts
-            if extra_options:
-                cmd_parts += extra_options
-            if fmt:
-                cmd_parts += ['-f', f'"{fmt}"']
-            cmd_parts += ['-o', f'"${{OUT_DIR}}/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
+            if not is_pure:
+                cmd_parts += common_opts
+                if extra_options:
+                    cmd_parts += extra_options
+                if fmt:
+                    cmd_parts += ['-f', f'"{fmt}"']
+                cmd_parts += ['-o', f'"${{OUT_DIR}}/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
+            else:
+                # pure: 파일명/경로 옵션만
+                cmd_parts += ['-o', f'"${{OUT_DIR}}/{number_prefix}{title_cmd}"', f'"{url}"']
             outfile.write(" ".join(cmd_parts) + " || true\n")
 
 # 실행 권한 부여(bash)
