@@ -66,7 +66,10 @@ if os.path.exists(output_file):
 # - Windows: 기본값
 common_opts = []
 if not is_windows:
-    common_opts += ['-4', '--extractor-args', 'youtube:player_client=android']
+    common_opts += ['-4']
+    # android client 는 다중 오디오(더빙) 트랙을 노출하지 않으므로 -l 지정 시 제외
+    if not lang:
+        common_opts += ['--extractor-args', 'youtube:player_client=android']
 else:
     # 원하면 IPv4 강제하고 싶으면 주석 해제
     # common_opts += ['-4']
@@ -117,14 +120,16 @@ with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", e
         # -l LANG: 해당 언어 오디오 트랙을 우선 선택하고, 없으면 기존 포맷 체인으로 폴백
         if lang:
             la = f"ba[language^={lang}]"
+            la_m4a = f"{la}[ext=m4a]"  # mp4 컨테이너 유지를 위해 m4a 우선
             if is_pure:
                 fmt = f"bv*+{la}/bv*+ba/b"
             elif quality == 0:
                 fmt = f"{la}/ba"
             elif quality in (720, 1080):
-                fmt = f"bv*[vcodec^=avc1][height<={quality}]+{la}/" + fmt
+                bv = f"bv*[vcodec^=avc1][height<={quality}]"
+                fmt = f"{bv}+{la_m4a}/{bv}+{la}/" + fmt
             else:
-                fmt = f"bv*[vcodec^=avc1]+{la}/" + fmt
+                fmt = f"bv*[vcodec^=avc1]+{la_m4a}/bv*[vcodec^=avc1]+{la}/" + fmt
 
         # 공통 커맨드 문자열 만들기
         if is_windows:
