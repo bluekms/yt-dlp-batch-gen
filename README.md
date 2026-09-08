@@ -1,6 +1,13 @@
 # yt-dlp-batch-gen
 input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.sh)를 생성하는 개인용 도구입니다.
 
+# 목차
+* [환경설정](#환경설정) — 처음 한 번
+* [업데이트](#업데이트) — 가끔 최신화할 때 이것만
+* [사용법](#사용법)
+* [문제 해결](#문제-해결)
+* [옵션](#옵션)
+
 # 환경설정
 ## F-Droid 설치 (https://f-droid.org/)
 * termux 검색 및 설치
@@ -31,6 +38,19 @@ yt-dlp --version
 ```
 wget -O gen.py https://raw.githubusercontent.com/bluekms/yt-dlp-batch-gen/main/gen.py
 ```
+
+# 업데이트
+가끔 최신 버전으로 올릴 때는 아래 블록만 통째로 붙여넣으면 됩니다. 확인 질문 없이 끝까지 진행됩니다.  
+termux 패키지(yt-dlp, ffmpeg, deno 포함)와 gen.py를 한 번에 최신화합니다.
+```
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get -o Dpkg::Options::="--force-confold" full-upgrade -y
+wget -O gen.py https://raw.githubusercontent.com/bluekms/yt-dlp-batch-gen/main/gen.py
+yt-dlp --version
+```
+* yt-dlp는 termux 패키지로 설치되어 있으므로 `yt-dlp -U`가 아니라 위의 `full-upgrade`로 갱신됩니다.
+* 유튜브 다운로드가 갑자기 실패하거나 포맷이 안 잡히면 대부분 yt-dlp가 오래된 것이니 이 블록을 먼저 실행하세요.
 
 # 사용법
 ## input.txt파일 준비
