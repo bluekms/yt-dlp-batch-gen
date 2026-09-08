@@ -47,24 +47,24 @@ python gen.py --order 1
 > 옵션 사용)  
 > 01. [체널명] 영상명.mp4  
 
-## --q N
+## -q N
 영상의 퀄리티를 선택합니다. <br/>
 N값은 0, 720, 1080 3가지만 유효합니다.
 
 ```
-python gen.py --q 0
+python gen.py -q 0
 ./ytd.sh
 ```
 기존의 --mp3 옵션과 같습니다. mp3 파일로 영상 없이 다운로드 합니다.
 
 ```
-python gen.py --q 720
+python gen.py -q 720
 ./ytd.sh
 ```
 영상의 품질을 720 이하로 제한합니다.
 
 ```
-python gen.py --q 1080
+python gen.py -q 1080
 ./ytd.sh
 ```
 영상의 품질을 1080 이하로 제한합니다.
@@ -76,3 +76,16 @@ windows. sh파일 대신 ytd.bat로 출력합니다.
 
 ## -p
 pure. 경로명, 파일명 옵션을 제외한 다른 옵션들을 무시합니다.
+
+
+## -l LANG
+자동번역(더빙) 오디오 트랙의 언어를 선택합니다(예: ko, ja, en).  
+해당 언어 트랙이 없는 영상은 기본 오디오로 자동 대체되어 실패 없이 다운로드됩니다.  
+`-q`, `-p` 옵션과 함께 사용할 수 있습니다.
+
+```
+python gen.py -l ko
+python gen.py -l ko -q 720
+python gen.py -l ko -q 0
+python gen.py -l ko -p
+```

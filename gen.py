@@ -34,6 +34,17 @@ is_windows = "-w" in sys.argv
 # 순수(pure) 모드 여부: 파일명/경로 관련 옵션만 남김
 is_pure = "-p" in sys.argv
 
+# -l LANG 처리: 자동번역(더빙) 오디오 트랙 언어. 해당 언어가 없으면 기본 오디오로 자동 대체.
+# (-p 모드에서도 적용)
+lang = None
+if "-l" in sys.argv:
+    try:
+        idx = sys.argv.index("-l")
+        lang = sys.argv[idx + 1]
+    except IndexError:
+        print("에러: -l 옵션 뒤에는 언어 코드(예: ko, ja, en)를 입력해야 합니다.")
+        sys.exit(1)
+
 # 실행 파일 prefix와 출력 경로 처리
 if is_windows:
     output_path = "."
@@ -103,6 +114,18 @@ with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", e
             else:
                 fmt = default_format()
 
+        # -l LANG: 해당 언어 오디오 트랙을 우선 선택하고, 없으면 기존 포맷 체인으로 폴백
+        if lang:
+            la = f"ba[language^={lang}]"
+            if is_pure:
+                fmt = f"bv*+{la}/bv*+ba/b"
+            elif quality == 0:
+                fmt = f"{la}/ba"
+            elif quality in (720, 1080):
+                fmt = f"bv*[vcodec^=avc1][height<={quality}]+{la}/" + fmt
+            else:
+                fmt = f"bv*[vcodec^=avc1]+{la}/" + fmt
+
         # 공통 커맨드 문자열 만들기
         if is_windows:
             cmd_parts = [yt_dlp_cmd]
@@ -114,7 +137,9 @@ with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", e
                     cmd_parts += ['-f', f'"{fmt}"']
                 cmd_parts += ['-o', f'"%OUT_DIR%/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
             else:
-                # pure: 파일명/경로 옵션만
+                # pure: 파일명/경로 옵션만(+ -l 지정 시 포맷)
+                if fmt:
+                    cmd_parts += ['-f', f'"{fmt}"']
                 cmd_parts += ['-o', f'"%OUT_DIR%/{number_prefix}{title_cmd}"', f'"{url}"']
             outfile.write(" ".join(cmd_parts) + "\n")
         else:
@@ -127,7 +152,9 @@ with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", e
                     cmd_parts += ['-f', f'"{fmt}"']
                 cmd_parts += ['-o', f'"${{OUT_DIR}}/{number_prefix}{title_cmd}"', '--no-overwrites', f'"{url}"']
             else:
-                # pure: 파일명/경로 옵션만
+                # pure: 파일명/경로 옵션만(+ -l 지정 시 포맷)
+                if fmt:
+                    cmd_parts += ['-f', f'"{fmt}"']
                 cmd_parts += ['-o', f'"${{OUT_DIR}}/{number_prefix}{title_cmd}"', f'"{url}"']
             outfile.write(" ".join(cmd_parts) + " || true\n")
 
