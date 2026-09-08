@@ -7,10 +7,24 @@ input.txt의 URL 목록을 기반으로 yt-dlp 다운로드 스크립트(output.
 * 브라우저와 F-Droid에서 '출처를 알 수 없는 앱 설치 권한' 제거
 
 ## termux 설정
+아래 블록을 통째로 붙여넣으면 확인 질문 없이 끝까지 진행됩니다.  
+마지막 `termux-setup-storage`만 안드로이드 권한 팝업에서 **허용**을 한 번 눌러야 합니다.
 ```
-pkg update
-pkg install -y -U nano git python curl wget ffmpeg deno yt-dlp
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get -o Dpkg::Options::="--force-confold" full-upgrade -y
+apt-get -o Dpkg::Options::="--force-confold" install -y nano git python curl wget ffmpeg deno yt-dlp
 termux-setup-storage
+```
+* `pkg` 대신 `apt-get`을 쓰는 이유: `pkg`는 내부에서 curl을 호출하는데, 패키지가 일부만 갱신된 상태면 curl 자체가 깨져서(`CANNOT LINK EXECUTABLE "curl"`) `pkg`가 동작하지 않습니다. `apt-get`은 curl 없이 동작합니다.
+* `full-upgrade`를 먼저 하는 이유: 라이브러리 버전이 서로 어긋나는 상태를 한 번에 정리하기 위해서입니다. `--force-confold`는 설정 파일 덮어쓰기 질문을 기존 유지로 자동 처리합니다.
+* **ffmpeg는 필수**입니다. 없으면 1080p 등 영상·오디오가 분리된 포맷을 병합하지 못해 **소리 없는 mp4**와 `.m4a`가 따로 저장되고, `-q 0`(mp3)도 동작하지 않습니다.
+
+설치 확인 (세 줄 모두 버전이 출력되어야 합니다):
+```
+curl --version | head -1
+ffmpeg -version | head -1
+yt-dlp --version
 ```
 
 ## yt-dlp-batch-gen 설치
@@ -21,7 +35,7 @@ wget -O gen.py https://raw.githubusercontent.com/bluekms/yt-dlp-batch-gen/main/g
 # 사용법
 ## input.txt파일 준비
 ```
-rm input.txt & nano input.txt
+rm -f input.txt; nano input.txt
 ```
 이후 준비한 url들을 붙여넣고 ctrl+x, y를 눌러 nano 종료.
 
@@ -31,6 +45,24 @@ python gen.py
 ```
 ```
 ./ytd.sh
+```
+
+
+# 문제 해결
+## `CANNOT LINK EXECUTABLE "curl": cannot locate symbol ...` 가 뜨고 `pkg`가 실패한다
+패키지가 일부만 갱신되어 curl 라이브러리 버전이 어긋난 상태입니다. 위 termux 설정 블록을 다시 붙여넣으면 `apt-get full-upgrade`가 정리해 줍니다.
+
+## `WARNING: ... ffmpeg is not installed. The formats won't be merged` 가 뜨고 영상에 소리가 없다
+ffmpeg가 없어 영상(`*.f299.mp4`)과 오디오(`*.f140-1.m4a`)가 따로 저장된 것입니다. ffmpeg를 설치한 뒤 **같은 명령을 다시 실행**하면 이미 받은 조각을 재사용해 병합만 수행합니다.
+```
+apt-get -o Dpkg::Options::="--force-confold" install -y ffmpeg
+python gen.py
+```
+
+## 더빙(`-l`)이나 1080p를 지정했는데 360p 영어로 받아진다
+오래된 gen.py입니다. 아래로 다시 받으세요.
+```
+wget -O gen.py https://raw.githubusercontent.com/bluekms/yt-dlp-batch-gen/main/gen.py
 ```
 
 
